@@ -27,6 +27,10 @@
 <meta property="og:site_name" content="wangt23&#39;s Blog">
 <meta property="og:description" content="[Unfinished] 1D grain size-specific entrainment-based Exner Equations render numerical experiments on non-uniform sediment mixture and non-equilibrium sediment transport. In this blog, I adopted numer">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/Transition-Morphodynamics/cmp1.png">
+<meta property="og:image" content="http://example.com/images/Transition-Morphodynamics/cmp3.png">
+<meta property="og:image" content="http://example.com/images/Transition-Morphodynamics/cmp2.png">
+<meta property="og:image" content="http://example.com/images/Transition-Morphodynamics/cmp4.png">
 <meta property="og:image" content="http://example.com/images/Transition-Morphodynamics/case1.png">
 <meta property="og:image" content="http://example.com/images/Transition-Morphodynamics/case2.png">
 <meta property="og:image" content="http://example.com/images/Transition-Morphodynamics/case3.png">
@@ -42,15 +46,20 @@
 <meta property="og:image" content="http://example.com/images/Transition-Morphodynamics/case13.png">
 <meta property="og:image" content="http://example.com/images/Transition-Morphodynamics/case14.png">
 <meta property="og:image" content="http://example.com/images/Transition-Morphodynamics/case15.png">
-<meta property="og:image" content="http://example.com/images/Transition-Morphodynamics/cmp1.png">
-<meta property="og:image" content="http://example.com/images/Transition-Morphodynamics/cmp3.png">
-<meta property="og:image" content="http://example.com/images/Transition-Morphodynamics/cmp2.png">
+<meta property="og:image" content="http://example.com/images/Transition-Morphodynamics/case16.png">
+<meta property="og:image" content="http://example.com/images/Transition-Morphodynamics/case17.png">
+<meta property="og:image" content="http://example.com/images/Transition-Morphodynamics/case18.png">
+<meta property="og:image" content="http://example.com/images/Transition-Morphodynamics/case19.png">
+<meta property="og:image" content="http://example.com/images/Transition-Morphodynamics/case20.png">
+<meta property="og:image" content="http://example.com/images/Transition-Morphodynamics/case21.png">
+<meta property="og:image" content="http://example.com/images/Transition-Morphodynamics/case22.png">
+<meta property="og:image" content="http://example.com/images/Transition-Morphodynamics/case23.png">
 <meta property="article:published_time" content="2025-06-16T02:21:08.000Z">
-<meta property="article:modified_time" content="2025-11-06T06:51:22.444Z">
+<meta property="article:modified_time" content="2025-11-06T09:05:49.047Z">
 <meta property="article:author" content="Tao Wang">
 <meta property="article:tag" content="Numerical Modeling">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/images/Transition-Morphodynamics/case1.png">
+<meta name="twitter:image" content="http://example.com/images/Transition-Morphodynamics/cmp1.png">
 
 <link rel="canonical" href="http://example.com/2025/06/16/Transition-Morphodynamics/">
 
@@ -201,7 +210,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2025-11-06 14:51:22" itemprop="dateModified" datetime="2025-11-06T14:51:22+08:00">2025-11-06</time>
+                <time title="Modified: 2025-11-06 17:05:49" itemprop="dateModified" datetime="2025-11-06T17:05:49+08:00">2025-11-06</time>
               </span>
 
           
@@ -218,136 +227,334 @@
         <p><strong>[Unfinished]</strong></p>
 <p>1D grain size-specific entrainment-based Exner Equations render numerical experiments on non-uniform sediment mixture and non-equilibrium sediment transport. In this blog, I adopted numerical schemes with Michel-Dansac et al. (2016&amp;2017) to enhance the numerical accuracy and  stability of governing equations from An et al. (2018). The <strong>numerical flux, source term, and friction term</strong> in hydrodynamics module (shallow water equations) have been upgraded with <strong>HLLC flux, well-balenced treatments, and semi-implicit term splitting schemes</strong>.</p>
 <span id="more"></span>
-
-<h1 id="Governing-Equations"><a href="#Governing-Equations" class="headerlink" title="Governing Equations"></a>Governing Equations</h1><p>Because reasoning has been detailed in An et al. (2018) and Viparelli et al. (2010), here I only present key equations and corresponding simplification.</p>
-<h2 id="Hydrodynamics-1D-Shallow-Water-with-Topography-and-Friction"><a href="#Hydrodynamics-1D-Shallow-Water-with-Topography-and-Friction" class="headerlink" title="Hydrodynamics: 1D Shallow Water with Topography and Friction"></a>Hydrodynamics: 1D Shallow Water with Topography and Friction</h2><p>$$<br>\begin{aligned}<br>\frac{\partial }{\partial t} h&amp;+ \frac{\partial }{\partial x} q&amp;&#x3D;&amp; 0\\<br>\frac{\partial }{\partial t} q&amp;+ \frac{\partial }{\partial x} \left(\frac{q^2}{h}+\frac{1}{2}gh^2\right)&amp;&#x3D;&amp;<br>-gh\frac{\partial z}{\partial x}-C_f\frac{q|q|}{h^2}\<br>\end{aligned}<br>$$</p>
+<h1>Governing Equations</h1>
+<p>Because reasoning has been detailed in An et al. (2018) and Viparelli et al. (2010), here I only present key equations and corresponding simplification.</p>
+<h2 id="Hydrodynamics-1D-Shallow-Water-with-Topography-and-Friction">Hydrodynamics: 1D Shallow Water with Topography and Friction</h2>
+<p>$$<br>
+\begin{aligned}<br>
+\frac{\partial }{\partial t} h&amp;+ \frac{\partial }{\partial x} q&amp;=&amp; 0\\<br>
+\frac{\partial }{\partial t} q&amp;+ \frac{\partial }{\partial x} \left(\frac{q^2}{h}+\frac{1}{2}gh^2\right)&amp;=&amp;<br>
+-gh\frac{\partial z}{\partial x}-C_f\frac{q|q|}{h^2}\<br>
+\end{aligned}<br>
+$$</p>
 <p>where $h$ is water depth [L], $q$ is discharge per unit width [L2T-1], $z$ is riverbed elevation [L], $C_f$ is resistance coefficient.</p>
-<p>Note that, Michel-Dansac et al. (2017) has proposed well-balanced treatment for a generalized friction term $-C_fq|q|&#x2F;h^{\eta}$. When $\eta&#x3D;2$ the friction term is treated with dimensionless coefficient as above, while $\eta&#x3D;7&#x2F;3$ represent a Manning-type friction term. Here $\eta&#x3D;2$ is taken to be consistent with An et al. (2018).</p>
-<h2 id="Sediment-Concentration"><a href="#Sediment-Concentration" class="headerlink" title="Sediment Concentration"></a>Sediment Concentration</h2><p>The volumne sediment concentration $C_i$ for $i$-th group in water flow is</p>
-<p>$$<br>\frac{\partial }{\partial t} hC_i+ \frac{\partial }{\partial x} qC_i&#x3D;\omega_i\left(\alpha_i\frac{q_{se,i}}{q}-\alpha_iC_i\right)<br>$$</p>
-<p>here $vs_i$ is settling velocity [LT-1] (calculated with Dietrich, 1982) for $i$-th group, $q_{se,i}$ is sediment transport entrainment per unit width [L2T-1] (calculated with Naito et al., 2019), $r_{0i}&#x3D;1$ is the recovery coefficient ans is treated constantly.</p>
-<h2 id="Exner-Equation-for-Riverbed-Elevation"><a href="#Exner-Equation-for-Riverbed-Elevation" class="headerlink" title="Exner Equation for Riverbed Elevation"></a>Exner Equation for Riverbed Elevation</h2><p>$$<br>(1-p)\frac{\partial z}{\partial t}&#x3D;-\sum_{k&#x3D;1}^{n_D}{\omega_k\left(\alpha_k\frac{q_{se,k}}{q}-\alpha_kC_k\right) }<br>$$</p>
-<p>where $\lambda_p&#x3D;0.4$ is the porosity and is treated constantly, $n_D$ is the number of grain size groups. Sum up sediment exchange for all groups to get the riverbed erosion or deposition.</p>
-<h2 id="Riverbed-Surface-Grain-Fraction-and-Exchange-with-Substrates"><a href="#Riverbed-Surface-Grain-Fraction-and-Exchange-with-Substrates" class="headerlink" title="Riverbed Surface Grain Fraction and Exchange with Substrates"></a>Riverbed Surface Grain Fraction and Exchange with Substrates</h2><p>To begin with, the evolution of active layer and grain fraction is</p>
-<p>$$<br>(1-p)\left[L_a\frac{\partial F_i}{\partial t}+\cancel{(F_i-f_{Ii})\frac{\partial L_a}{\partial t}}\right]&#x3D;<br>f_{Ii}\sum_{k&#x3D;1}^{n_D}{\omega_k\left(\alpha_k\frac{q_{se,k}}{q}-\alpha_kC_k\right) }-\omega_i\left(\alpha_i\frac{q_{se,i}}{q}-\alpha_iC_i\right)<br>$$</p>
-<p>On the left hand side, $F_i$ represent the volume fraction of $i$-th grain size in the surface active layer and will be detailed in the following subsection <em>Substrate Stratigraphy</em>, the second differential term about $L_a$, the thickness of active layer, is reduced because $L_a&#x3D;0.78 m$ is treated as a constant. Meanwhile, $f_{Ii}$ represent the exchange fraction of $i$-th group between active layer and substrates.</p>
-<p>The exchange fraction $f_{Ii}$, which describes the exchange at the interface where the active layer and the top substrate meet $z_{\mathrm{int}}&#x3D;z_b-L_a$, is either determined by the top substrate when eroding, or determined by mixing the active layer and water flow sediment content when depositing.</p>
-<p>$$<br>f_{Ii&#x3D;}<br>\begin{cases}<br>f_i|_{z&#x3D;z_b-L_a}&amp;, \frac{\partial z}{\partial t}&lt;0 \\<br>\alpha F_i+(1-\alpha)\frac{C_i}{\sum_{k&#x3D;1}^{n_D} C_k}&amp;, \frac{\partial z}{\partial t}&gt;0<br>\end{cases}<br>$$</p>
-<p>where $f_{i,(\cdot)}$ is the volume fraction of substrates and will be detailed in the following subsection <em>Substrate Stratigraphy</em>. $\alpha&#x3D;0.5$ is the mixing coefficient which is treated constantly, inferring that the growth of substrate is composed of active layer and water flow.</p>
-<h2 id="Substrate-Stratigraphy"><a href="#Substrate-Stratigraphy" class="headerlink" title="Substrate Stratigraphy"></a>Substrate Stratigraphy</h2><p>This subsection aims to describe substrates beneath the active layer, evolving thichness and volume fraction for each grain size group. Viparelli et al. (2010) is adopted strictly.</p>
+<p>Note that, Michel-Dansac et al. (2017) has proposed well-balanced treatment for a generalized friction term $-C_fq|q|/h^{\eta}$. When $\eta=2$ the friction term is treated with dimensionless coefficient as above, while $\eta=7/3$ represent a Manning-type friction term. Here $\eta=2$ is taken to be consistent with An et al. (2018).</p>
+<h2 id="Sediment-Concentration">Sediment Concentration</h2>
+<p>The volumne sediment concentration $C_i$ for $i$-th group in water flow is</p>
+<p>$$<br>
+\frac{\partial }{\partial t} hC_i+ \frac{\partial }{\partial x} qC_i=\omega_i\left(\alpha_i\frac{q_{se,i}}{q}-\alpha_iC_i\right)<br>
+$$</p>
+<p>here $vs_i$ is settling velocity [LT-1] (calculated with Dietrich, 1982) for $i$-th group, $q_{se,i}$ is sediment transport entrainment per unit width [L2T-1] (calculated with Naito et al., 2019), $r_{0i}=1$ is the recovery coefficient ans is treated constantly.</p>
+<h2 id="Exner-Equation-for-Riverbed-Elevation">Exner Equation for Riverbed Elevation</h2>
+<p>$$<br>
+(1-p)\frac{\partial z}{\partial t}=-\sum_{k=1}^{n_D}{\omega_k\left(\alpha_k\frac{q_{se,k}}{q}-\alpha_kC_k\right) }<br>
+$$</p>
+<p>where $\lambda_p=0.4$ is the porosity and is treated constantly, $n_D$ is the number of grain size groups. Sum up sediment exchange for all groups to get the riverbed erosion or deposition.</p>
+<h2 id="Riverbed-Surface-Grain-Fraction-and-Exchange-with-Substrates">Riverbed Surface Grain Fraction and Exchange with Substrates</h2>
+<p>To begin with, the evolution of active layer and grain fraction is</p>
+<p>$$<br>
+(1-p)\left[L_a\frac{\partial F_i}{\partial t}+\cancel{(F_i-f_{Ii})\frac{\partial L_a}{\partial t}}\right]=<br>
+f_{Ii}\sum_{k=1}^{n_D}{\omega_k\left(\alpha_k\frac{q_{se,k}}{q}-\alpha_kC_k\right) }-\omega_i\left(\alpha_i\frac{q_{se,i}}{q}-\alpha_iC_i\right)<br>
+$$</p>
+<p>On the left hand side, $F_i$ represent the volume fraction of $i$-th grain size in the surface active layer and will be detailed in the following subsection <em>Substrate Stratigraphy</em>, the second differential term about $L_a$, the thickness of active layer, is reduced because $L_a=0.78 m$ is treated as a constant. Meanwhile, $f_{Ii}$ represent the exchange fraction of $i$-th group between active layer and substrates.</p>
+<p>The exchange fraction $f_{Ii}$, which describes the exchange at the interface where the active layer and the top substrate meet $z_{\mathrm{int}}=z_b-L_a$, is either determined by the top substrate when eroding, or determined by mixing the active layer and water flow sediment content when depositing.</p>
+<p>$$<br>
+f_{Ii=}<br>
+\begin{cases}<br>
+f_i|<em>{z=z_b-L_a}&amp;, \frac{\partial z}{\partial t}&lt;0 \\<br>
+\alpha F_i+(1-\alpha)\frac{C_i}{\sum</em>{k=1}^{n_D} C_k}&amp;, \frac{\partial z}{\partial t}&gt;0<br>
+\end{cases}<br>
+$$</p>
+<p>where $f_{i,(\cdot)}$ is the volume fraction of substrates and will be detailed in the following subsection <em>Substrate Stratigraphy</em>. $\alpha=0.5$ is the mixing coefficient which is treated constantly, inferring that the growth of substrate is composed of active layer and water flow.</p>
+<h2 id="Substrate-Stratigraphy">Substrate Stratigraphy</h2>
+<p>This subsection aims to describe substrates beneath the active layer, evolving thichness and volume fraction for each grain size group. Viparelli et al. (2010) is adopted strictly.</p>
 <p>Firstly, let’s have a overview of the stratigraphy of riverbed $z(x)$ in Viparelli et al. (2010), which describes vertical layers of different compositions of grain size.</p>
-<p>The uppermost layer of riverbed, the <strong>active layer</strong> whose thickness is denoted as $L_a$, immediate the exchanges between water flow and substrates. Thus the elevations of its top and bottom are $z_b$ and $z_{\mathrm{int}}&#x3D;z_b-L_a$ respectively. Its grain size compositions $F_i$ will determine riverbed surface resistance and water flow sediment entrainment because the characteristic grain sizes are all based on $F_i$-weighted quantiles or average. The adjustment of surface fractions has been stated in the subsection <em>Riverbed Surface Grain Fraction and Exchange with Substrates</em>.</p>
-<p>Beneath the active layer are the <strong>substrates</strong>. Contacting with the active layer, the uppermost substrate top surface is exactly the bottom of the active layer, thus the corresponding elevation is also $z_b-L_a$. The bottom of the lowermost substrate, which should not be eroded during the whole numerical test, is set to be $z_{\mathrm{base}}&#x3D;-2L_s$ while $L_s&#x3D;0.5 m$ is the maximum thickness of each substrate, and thus the total thickness of all substrates is $z_{\mathrm{int}}-z_{\mathrm{base}}&#x3D;z_b-L_a+2L_s$ . Consequently, the number of substrates is calculated as $M_{ly}&#x3D;\lfloor \frac{z_{\mathrm{int}}-z_{\mathrm{base}}}{L_s}\rfloor+2&#x3D;\lfloor \frac{ z_b-L_a+2L_s }{L_s}\rfloor+2$, while $1$ represent the baseline layer beneath $z_{\mathrm{base}}$ and $M_{ly}$ represent the uppermost substrate which is directly contacting with the active layer. Because the baseline layer, labeled as $1$, will never participate in exchange and evolution, the total number is essentially $M_{ly}-1$. Note the thickness of all substrates is $L_s$ except the uppermost, such that the thickness of the uppermost substrate is $\left(z_{\mathrm{int}}-z_{\mathrm{base}}\right)-\left(M_{ly}-2\right)L_s$.</p>
-<h2 id="Resistance-and-Sediment-Transport-Capacity"><a href="#Resistance-and-Sediment-Transport-Capacity" class="headerlink" title="Resistance and Sediment Transport Capacity"></a>Resistance and Sediment Transport Capacity</h2><h1 id="Characteristic-Scales-and-Numerical-Rigidity"><a href="#Characteristic-Scales-and-Numerical-Rigidity" class="headerlink" title="Characteristic Scales and Numerical Rigidity"></a>Characteristic Scales and Numerical Rigidity</h1><h2 id="Hydrodynamics-and-Sediment-Concentration-Transport"><a href="#Hydrodynamics-and-Sediment-Concentration-Transport" class="headerlink" title="Hydrodynamics and Sediment Concentration Transport"></a>Hydrodynamics and Sediment Concentration Transport</h2><p>According to the characteristic line $\frac{\mathrm{d}W}{\mathrm{d}t}&#x3D;\frac{\partial W}{\partial t}+\lambda_w\frac{\partial W}{\partial x}$, the celerities of hydrodynamic conservative variables $W&#x3D;(h,q)^T$ are</p>
-<p>$$<br>\lambda_{w,\pm}&#x3D;u\pm \sqrt{gh}&#x3D;\frac{q}{h}\pm\sqrt{gh}\le |u|+\sqrt{gh}<br>$$</p>
-<p>Similarly, the celerity of sediment concentration is obviously $u&#x3D;q&#x2F;h$ due to $\frac{\mathrm{d}}{\mathrm{d}t}hC&#x3D;\frac{\partial hC}{\partial t}+u\frac{\partial hC}{\partial x}$.</p>
-<p>For a characteristic length scale $\eta_w&#x3D;\eta_s\sim \Delta x$, their corresponding timescales are $\tau_w&#x3D;\frac{\eta}{|u|+\sqrt{gh}}$ for hydrodynamics, and $\tau_s&#x3D;\eta&#x2F;|u|$ for sediment concentration. The ratio of timescales $\tau_s&#x2F;\tau_w&#x3D;\frac{|u|+\sqrt{gh}}{|u|}&#x3D;1+\frac{1}{Fr}$ corresponds to the Froude number $Fr&#x3D;|u|&#x2F;\sqrt{gh}$ which is low (e.g. $&lt;0.2$) for natural river channels thus $\tau_s&#x2F;\tau_w&gt;6$. Such that sediment concentration needs a much longer time to respond than hydrodynamics does to a sudden change in water supply.</p>
-<h2 id="Deposition-and-Erosion"><a href="#Deposition-and-Erosion" class="headerlink" title="Deposition and Erosion"></a>Deposition and Erosion</h2><p>Deposition and erosion are determined by the current sediment concentration $C$ and saturated concentration $C_e&#x3D;q_{se}&#x2F;q$, that is</p>
-<p>$$<br>\frac{\mathrm{d}hC}{\mathrm{d}t}&#x3D;\alpha\omega(C_e-C)<br>$$</p>
+<p>The uppermost layer of riverbed, the <strong>active layer</strong> whose thickness is denoted as $L_a$, immediate the exchanges between water flow and substrates. Thus the elevations of its top and bottom are $z_b$ and $z_{\mathrm{int}}=z_b-L_a$ respectively. Its grain size compositions $F_i$ will determine riverbed surface resistance and water flow sediment entrainment because the characteristic grain sizes are all based on $F_i$-weighted quantiles or average. The adjustment of surface fractions has been stated in the subsection <em>Riverbed Surface Grain Fraction and Exchange with Substrates</em>.</p>
+<p>Beneath the active layer are the <strong>substrates</strong>. Contacting with the active layer, the uppermost substrate top surface is exactly the bottom of the active layer, thus the corresponding elevation is also $z_b-L_a$. The bottom of the lowermost substrate, which should not be eroded during the whole numerical test, is set to be $z_{\mathrm{base}}=-2L_s$ while $L_s=0.5 m$ is the maximum thickness of each substrate, and thus the total thickness of all substrates is $z_{\mathrm{int}}-z_{\mathrm{base}}=z_b-L_a+2L_s$ . Consequently, the number of substrates is calculated as $M_{ly}=\lfloor \frac{z_{\mathrm{int}}-z_{\mathrm{base}}}{L_s}\rfloor+2=\lfloor \frac{ z_b-L_a+2L_s }{L_s}\rfloor+2$, while $1$ represent the baseline layer beneath $z_{\mathrm{base}}$ and $M_{ly}$ represent the uppermost substrate which is directly contacting with the active layer. Because the baseline layer, labeled as $1$, will never participate in exchange and evolution, the total number is essentially $M_{ly}-1$. Note the thickness of all substrates is $L_s$ except the uppermost, such that the thickness of the uppermost substrate is $\left(z_{\mathrm{int}}-z_{\mathrm{base}}\right)-\left(M_{ly}-2\right)L_s$.</p>
+<h2 id="Resistance-and-Sediment-Transport-Capacity">Resistance and Sediment Transport Capacity</h2>
+<h1>Characteristic Scales and Numerical Rigidity</h1>
+<h2 id="Hydrodynamics-and-Sediment-Concentration-Transport">Hydrodynamics and Sediment Concentration Transport</h2>
+<p>According to the characteristic line $\frac{\mathrm{d}W}{\mathrm{d}t}=\frac{\partial W}{\partial t}+\lambda_w\frac{\partial W}{\partial x}$, the celerities of hydrodynamic conservative variables $W=(h,q)^T$ are</p>
+<p>$$<br>
+\lambda_{w,\pm}=u\pm \sqrt{gh}=\frac{q}{h}\pm\sqrt{gh}\le |u|+\sqrt{gh}<br>
+$$</p>
+<p>Similarly, the celerity of sediment concentration is obviously $u=q/h$ due to $\frac{\mathrm{d}}{\mathrm{d}t}hC=\frac{\partial hC}{\partial t}+u\frac{\partial hC}{\partial x}$.</p>
+<p>For a characteristic length scale $\eta_w=\eta_s\sim \Delta x$, their corresponding timescales are $\tau_w=\frac{\eta}{|u|+\sqrt{gh}}$ for hydrodynamics, and $\tau_s=\eta/|u|$ for sediment concentration. The ratio of timescales $\tau_s/\tau_w=\frac{|u|+\sqrt{gh}}{|u|}=1+\frac{1}{Fr}$ corresponds to the Froude number $Fr=|u|/\sqrt{gh}$ which is low (e.g. $&lt;0.2$) for natural river channels thus $\tau_s/\tau_w&gt;6$. Such that sediment concentration needs a much longer time to respond than hydrodynamics does to a sudden change in water supply.</p>
+<h2 id="Deposition-and-Erosion">Deposition and Erosion</h2>
+<p>Deposition and erosion are determined by the current sediment concentration $C$ and saturated concentration $C_e=q_{se}/q$, that is</p>
+<p>$$<br>
+\frac{\mathrm{d}hC}{\mathrm{d}t}=\alpha\omega(C_e-C)<br>
+$$</p>
 <p>Here depth $h$ is treated as a constant number locally for simplification, yielding a 1st-order linear ODE</p>
-<p>$$<br>\frac{\mathrm{d}C}{\mathrm{d}t}&#x3D;\frac{\alpha\omega}{h}(C_e-C)<br>$$</p>
-<p>with its analytic solution and a initial condition $C(t&#x3D;0)&#x3D;C_0$,</p>
-<p>$$<br>C(t)&#x3D;C_e-(C_e-C_0)e^{-\frac{\alpha\omega}{h}t}<br>$$</p>
-<p>Because $C&#x3D;C_e$ is the asymptote of this solution without intersecting the solution curve, a tolerance $\frac{C_e-C}{C_e-C_0}\le\varepsilon_c$ is set to be the proxy of reaching the equilibirum. So the corresponding timescale of (d)eposition and (e)rosion is</p>
-<p>$$<br>\tau_{de}&#x3D;\frac{h}{\alpha\omega}\ln{\frac{1}{\varepsilon}}<br>$$</p>
-<p>with the lengthscale $\eta_{de}&#x3D;h$ and velocity scale $\lambda_{de}&#x3D;\alpha\omega$.</p>
-<h2 id="Riverbed"><a href="#Riverbed" class="headerlink" title="Riverbed"></a>Riverbed</h2><p>The adjustment of riverbed consists of two process. One is riverbed elevation aggradation or degradation that $\partial z&#x2F;\partial t \sim \alpha\omega&#x2F;(1-p)$, the other one is fractions of grain size distribution that $\partial F&#x2F;\partial t\sim \frac{\alpha\omega}{L_a(1-p)}$. The lengthscale of grain fraction adjustment is the thickness of active layer $\eta_G&#x3D;L_a$, which can also be treated as the lengthscale of riverbed aggradation and degradation for simplicity $\eta_z&#x3D;L_a$.</p>
-<p>While the porosity plays a role in both of them, they also share the velocity scale $\lambda_G&#x3D;\lambda_z&#x3D;\frac{\alpha\omega}{1-p}$. Consequently, the corresponding timescale is $\tau_G&#x3D;\tau_z&#x3D;\frac{(1-p)L_a}{\alpha\omega}$.</p>
-<h2 id="Numerical-Rigidity-and-Stability-Condition"><a href="#Numerical-Rigidity-and-Stability-Condition" class="headerlink" title="Numerical Rigidity and Stability Condition"></a>Numerical Rigidity and Stability Condition</h2><p>As stated above, there are three different lengthscales, $\Delta x&gt;&gt;h&gt;L_a$, and four velocity scales $|u|+\sqrt{gh}&gt;|u|&gt;&gt;\frac{\alpha\omega}{1-p}&gt;\alpha\omega$. Length, velocity, and time scales are summarized for the processes of hydrodynamics, sediment convection, erosion-deposition, riverbed elevation, and grain size fractions.</p>
-<p>$$<br>\begin{array}{rccc}  % 4列，均为居中对齐（l&#x3D;左对齐，r&#x3D;右对齐，c&#x3D;居中）<br>    \hline<br>     &amp; \eta &amp; \lambda &amp; \tau \\  % 第1行（表头）<br>    \hline<br>    \text{Hydrodynamics} &amp; \Delta x &amp; |u|+\sqrt{gh} &amp; \Delta x&#x2F;\left(|u|+\sqrt{gh}\right) \\  % 第2行（数据）<br>    \text{Sediment Convection} &amp; \Delta x &amp; |u| &amp; \Delta x&#x2F;|u| \\  % 第3行（数据）<br>    \text{Erosion-Deposition} &amp; h &amp; \alpha\omega &amp; h&#x2F;\alpha\omega \\  % 第4行（数据）<br>    \text{Riverbed Elevation} &amp; L_a &amp; \alpha\omega&#x2F;(1-p) &amp; {(1-p)L_a}&#x2F;{\alpha\omega} \\  % 第5行（数据）<br>    \text{Grain Size Fraction} &amp; L_a &amp; \alpha\omega&#x2F;(1-p) &amp; {(1-p)L_a}&#x2F;{\alpha\omega} \\  % 第6行（数据）<br>    \hline  % 底部横线<br>\end{array}<br>$$</p>
+<p>$$<br>
+\frac{\mathrm{d}C}{\mathrm{d}t}=\frac{\alpha\omega}{h}(C_e-C)<br>
+$$</p>
+<p>with its analytic solution and a initial condition $C(t=0)=C_0$,</p>
+<p>$$<br>
+C(t)=C_e-(C_e-C_0)e^{-\frac{\alpha\omega}{h}t}<br>
+$$</p>
+<p>Because $C=C_e$ is the asymptote of this solution without intersecting the solution curve, a tolerance $\frac{C_e-C}{C_e-C_0}\le\varepsilon_c$ is set to be the proxy of reaching the equilibirum. So the corresponding timescale of (d)eposition and (e)rosion is</p>
+<p>$$<br>
+\tau_{de}=\frac{h}{\alpha\omega}\ln{\frac{1}{\varepsilon}}<br>
+$$</p>
+<p>with the lengthscale $\eta_{de}=h$ and velocity scale $\lambda_{de}=\alpha\omega$.</p>
+<h2 id="Riverbed">Riverbed</h2>
+<p>The adjustment of riverbed consists of two process. One is riverbed elevation aggradation or degradation that $\partial z/\partial t \sim \alpha\omega/(1-p)$, the other one is fractions of grain size distribution that $\partial F/\partial t\sim \frac{\alpha\omega}{L_a(1-p)}$. The lengthscale of grain fraction adjustment is the thickness of active layer $\eta_G=L_a$, which can also be treated as the lengthscale of riverbed aggradation and degradation for simplicity $\eta_z=L_a$.</p>
+<p>While the porosity plays a role in both of them, they also share the velocity scale $\lambda_G=\lambda_z=\frac{\alpha\omega}{1-p}$. Consequently, the corresponding timescale is $\tau_G=\tau_z=\frac{(1-p)L_a}{\alpha\omega}$.</p>
+<h2 id="Numerical-Rigidity-and-Stability-Condition">Numerical Rigidity and Stability Condition</h2>
+<p>As stated above, there are three different lengthscales, $\Delta x&gt;&gt;h&gt;L_a$, and four velocity scales $|u|+\sqrt{gh}&gt;|u|&gt;&gt;\frac{\alpha\omega}{1-p}&gt;\alpha\omega$. Length, velocity, and time scales are summarized for the processes of hydrodynamics, sediment convection, erosion-deposition, riverbed elevation, and grain size fractions.</p>
+<p>$$<br>
+\begin{array}{rccc}  % 4列，均为居中对齐（l=左对齐，r=右对齐，c=居中）<br>
+\hline<br>
+&amp; \eta &amp; \lambda &amp; \tau \\  % 第1行（表头）<br>
+\hline<br>
+\text{Hydrodynamics} &amp; \Delta x &amp; |u|+\sqrt{gh} &amp; \Delta x/\left(|u|+\sqrt{gh}\right) \\  % 第2行（数据）<br>
+\text{Sediment Convection} &amp; \Delta x &amp; |u| &amp; \Delta x/|u| \\  % 第3行（数据）<br>
+\text{Erosion-Deposition} &amp; h &amp; \alpha\omega &amp; h/\alpha\omega \\  % 第4行（数据）<br>
+\text{Riverbed Elevation} &amp; L_a &amp; \alpha\omega/(1-p) &amp; {(1-p)L_a}/{\alpha\omega} \\  % 第5行（数据）<br>
+\text{Grain Size Fraction} &amp; L_a &amp; \alpha\omega/(1-p) &amp; {(1-p)L_a}/{\alpha\omega} \\  % 第6行（数据）<br>
+\hline  % 底部横线<br>
+\end{array}<br>
+$$</p>
 <p>The timescales vary across several orders of magnitude, introducing severe numerical rigidity and thus challanges to numerical stability. Besides classic Courant-Friedrichs-Lewy condition for hydrodynamics, the stability condition should be generalized to</p>
-<p>$$<br>\begin{aligned}<br>\Delta t \le&amp; \min\left[\frac{\Delta x}{|u|+\sqrt{gh}},\frac{h}{\alpha\omega},\frac{(1-p)L_a}{\alpha\omega}\right]\times \text{MCFL} \\<br>\le&amp; \min\left[\frac{\Delta x}{|u|+\sqrt{gh}},\frac{h}{\alpha\omega},\frac{(1-p)L_a}{\alpha\omega}\right]\times \left(1,\ln{\frac{1}{\varepsilon}},\ln{\frac{1}{\varepsilon}}\right)\\<br>\end{aligned}<br>$$</p>
-<p>where $\text{MCFL}\le \left(1,\ln{\frac{1}{\varepsilon}},\ln{\frac{1}{\varepsilon}}\right)$ is the stability condition of the modified CFL number for water and sediment respectively. Within one single time step, for example, if the concentration $C$ relaxes to the residual $\varepsilon&#x3D;0.5$, the corresponding limitation will be $\ln{\frac{1}{\varepsilon}}\approx0.69$; while $\varepsilon\approx0.607$ corresponds to $\ln{\frac{1}{\varepsilon}}&#x3D;0.5$.</p>
-<h1 id="Numerical-schemes"><a href="#Numerical-schemes" class="headerlink" title="Numerical schemes"></a>Numerical schemes</h1><h2 id="Hydrodynamics"><a href="#Hydrodynamics" class="headerlink" title="Hydrodynamics"></a>Hydrodynamics</h2><p>A well-balanced scheme has been adopted to deal with complicate riverbed profiles (topography) and fiercely varying resistance coefficient due to skin-form transition (friction). In addition, a two-step evolution-splitting method is adopted to further enhance the numerical stability. Only the implementation method and explanation are presented here, for detailed derivation and proof, please refer to Michel-Dansac et al. (2016, 2017).</p>
-<p>Note that while Michel-Dansac et al. (2017) treated the resistance coefficient $C_f$ as a global constant, here $C_f(t)&#x3D;C_f(t_n), t_n\le t\lt t_{n+1}$ is treated as a constant for each time step to adopt their scheme. It is appropriate because the rate of grain size adjustment is much slower than that of hydrodynamics, i.e., $\lambda_G&lt;&lt;\lambda_w$ as stated above.</p>
+<p>$$<br>
+\begin{aligned}<br>
+\Delta t \le&amp; \min\left[\frac{\Delta x}{|u|+\sqrt{gh}},\frac{h}{\alpha\omega},\frac{(1-p)L_a}{\alpha\omega}\right]\times \text{MCFL} \\<br>
+\le&amp; \min\left[\frac{\Delta x}{|u|+\sqrt{gh}},\frac{h}{\alpha\omega},\frac{(1-p)L_a}{\alpha\omega}\right]\times \left(1,\ln{\frac{1}{\varepsilon}},\ln{\frac{1}{\varepsilon}}\right)\\<br>
+\end{aligned}<br>
+$$</p>
+<p>where $\text{MCFL}\le \left(1,\ln{\frac{1}{\varepsilon}},\ln{\frac{1}{\varepsilon}}\right)$ is the stability condition of the modified CFL number for water and sediment respectively. Within one single time step, for example, if the concentration $C$ relaxes to the residual $\varepsilon=0.5$, the corresponding limitation will be $\ln{\frac{1}{\varepsilon}}\approx0.69$; while $\varepsilon\approx0.607$ corresponds to $\ln{\frac{1}{\varepsilon}}=0.5$.</p>
+<h1>Numerical schemes</h1>
+<h2 id="Hydrodynamics">Hydrodynamics</h2>
+<p>A well-balanced scheme has been adopted to deal with complicate riverbed profiles (topography) and fiercely varying resistance coefficient due to skin-form transition (friction). In addition, a two-step evolution-splitting method is adopted to further enhance the numerical stability. Only the implementation method and explanation are presented here, for detailed derivation and proof, please refer to Michel-Dansac et al. (2016, 2017).</p>
+<p>Note that while Michel-Dansac et al. (2017) treated the resistance coefficient $C_f$ as a global constant, here $C_f(t)=C_f(t_n), t_n\le t\lt t_{n+1}$ is treated as a constant for each time step to adopt their scheme. It is appropriate because the rate of grain size adjustment is much slower than that of hydrodynamics, i.e., $\lambda_G&lt;&lt;\lambda_w$ as stated above.</p>
 <p>Based on the Finite Volumn Method, the conservative variable, numerical flux, topographic source term, and the friction term are discreted to</p>
-<p>$$<br>\frac{W_j^{n+1}-W_j^n}{\Delta t}+\frac{F_{j+1&#x2F;2}^n-F_{j-1&#x2F;2}^n}{\Delta x}&#x3D;St_j^n+Sf_j^n<br>$$</p>
-<p>where $W_j^n$ is the $[x_{j-1&#x2F;2},x_{j+1&#x2F;2}]$ cell-averaged conservative variable $W&#x3D;(h,q)^T$, while $F_{j+1&#x2F;2}^n$ is the $[t_n,t_{n+1}]$ cell-averaged numerical flux at the $x_{j+1&#x2F;2}$ interface, and $St_j^n$, $Sf_j^n$ are $[x_{j-1&#x2F;2},x_{j+1&#x2F;2}]\times[t_n,t_{n+1}]$ cell-averaged topographic and friction term.</p>
-<h3 id="Well-balanced-HLLC-Flux-for-Topography-and-Friction"><a href="#Well-balanced-HLLC-Flux-for-Topography-and-Friction" class="headerlink" title="Well-balanced HLLC Flux for Topography and Friction"></a>Well-balanced HLLC Flux for Topography and Friction</h3><p>The numerical flux $F_{j+1&#x2F;2}^n$ solves the Riemann problem with initial $W_L&#x3D;W_j^n$ and $W_R&#x3D;W_{j+1}^n$. The HLLC methods divide the $x-t$ plane into four parts $W_L$, $W_R$, $W_L^{\ast}$, $W_R^{\ast}$ based on celerities $\lambda_{L,u,R}&#x3D;\partial F&#x2F;\partial W$, yielding the numerical flux by integrating over $[x_j,x_{j+1}]\times[t_n,t_{n+1}]$,</p>
-<p>$$<br>F_{j+1&#x2F;2}^n&#x3D;\frac{1}{2}\left(F(W_j)+F(W_{j+1})\right)+\lambda_{j+1&#x2F;2}^L(W_L^{\ast}-W_L)+\lambda_{j+1&#x2F;2}^R(W_R^{\ast}-W_R)<br>$$</p>
+<p>$$<br>
+\frac{W_j^{n+1}-W_j^n}{\Delta t}+\frac{F_{j+1/2}^n-F_{j-1/2}^n}{\Delta x}=St_j^n+Sf_j^n<br>
+$$</p>
+<p>where $W_j^n$ is the $[x_{j-1/2},x_{j+1/2}]$ cell-averaged conservative variable $W=(h,q)^T$, while $F_{j+1/2}^n$ is the $[t_n,t_{n+1}]$ cell-averaged numerical flux at the $x_{j+1/2}$ interface, and $St_j^n$, $Sf_j^n$ are $[x_{j-1/2},x_{j+1/2}]\times[t_n,t_{n+1}]$ cell-averaged topographic and friction term.</p>
+<h3 id="Well-balanced-HLLC-Flux-for-Topography-and-Friction">Well-balanced HLLC Flux for Topography and Friction</h3>
+<p>The numerical flux $F_{j+1/2}^n$ solves the Riemann problem with initial $W_L=W_j^n$ and $W_R=W_{j+1}^n$. The HLLC methods divide the $x-t$ plane into four parts $W_L$, $W_R$, $W_L^{\ast}$, $W_R^{\ast}$ based on celerities $\lambda_{L,u,R}=\partial F/\partial W$, yielding the numerical flux by integrating over $[x_j,x_{j+1}]\times[t_n,t_{n+1}]$,</p>
+<p>$$<br>
+F_{j+1/2}^n=\frac{1}{2}\left(F(W_j)+F(W_{j+1})\right)+\lambda_{j+1/2}^L(W_L^{\ast}-W_L)+\lambda_{j+1/2}^R(W_R^{\ast}-W_R)<br>
+$$</p>
 <p>Based on the HLL state</p>
-<p>$$<br>W_{HLL}&#x3D;\frac{\lambda_RW_R-\lambda_LW_L-(F(W_R)-F(W_L))}{\lambda_R-\lambda_L}<br>$$</p>
-<p>variables in the star region can be calculated as followed, while the source terms are both considered at the intersurface $j+1&#x2F;2$,</p>
-<p>$$<br>q_L^{\ast}&#x3D;q_R^{\ast}&#x3D;q_{HLL}+\Delta x\frac{\overline{St}+\overline{Sf}}{\lambda_R-\lambda_L}<br>$$</p>
-<p>$$<br>\begin{cases}<br>\widetilde h_L^{\ast}&#x3D;h_{HLL}-\frac{\lambda_R \Delta x}{\lambda_R-\lambda_L} (\frac{\bar{St}}{\alpha_t}+\frac{\bar{Sf}}{\alpha_f}) \\<br>\widetilde h_R^{\ast}&#x3D;h_{HLL}-\frac{\lambda_L \Delta x}{\lambda_R-\lambda_L} (\frac{\bar{St}}{\alpha_t}+\frac{\bar{Sf}}{\alpha_f})<br>\end{cases}<br>$$</p>
-<p>$$<br>\begin{cases}<br>\alpha_t&#x3D;&amp;-\frac{(q^{\ast})^2}{h_Lh_R}+g\frac{h_L+h_R}{2} \\<br>\alpha_f&#x3D;&amp;-\frac{(\bar{q})^2}{h_Lh_R}+g\frac{h_L+h_R}{2}<br>\end{cases}<br>$$</p>
-<p>$$<br>\begin{cases}<br>h_L^{\ast}&#x3D;\min\left(\max(\widetilde h_L^{\ast},h_{\varepsilon}),(1-\frac{\lambda_R}{\lambda_L})h_{HLL}+\frac{\lambda_R}{\lambda_L}h_{\varepsilon}\right) \\<br>h_R^{\ast}&#x3D;\min\left(\max(\widetilde h_R^{\ast},h_{\varepsilon}),(1-\frac{\lambda_L}{\lambda_R})h_{HLL}+\frac{\lambda_L}{\lambda_R}h_{\varepsilon}\right)<br>\end{cases}<br>$$</p>
-<p>where $h_{\varepsilon}&#x3D;\min(h_L,h_R,h_{HLL})$ is taken for preserving positivity.</p>
-<p>The topography source term is well-balanced when $\partial W&#x2F;\partial t&#x3D;0$, such that</p>
-<p>$$<br>\begin{cases}<br>\frac{\partial }{\partial x} q &amp; &#x3D; &amp; 0 \\<br>\frac{\partial }{\partial x} \left(\frac{q^2}{h}+\frac{1}{2}gh^2\right)&amp;&#x3D;&amp;-gh\frac{\partial z}{\partial t}<br>\end{cases}<br>$$</p>
+<p>$$<br>
+W_{HLL}=\frac{\lambda_RW_R-\lambda_LW_L-(F(W_R)-F(W_L))}{\lambda_R-\lambda_L}<br>
+$$</p>
+<p>variables in the star region can be calculated as followed, while the source terms are both considered at the intersurface $j+1/2$,</p>
+<p>$$<br>
+q_L^{\ast}=q_R^{\ast}=q_{HLL}+\Delta x\frac{\overline{St}+\overline{Sf}}{\lambda_R-\lambda_L}<br>
+$$</p>
+<p>$$<br>
+\begin{cases}<br>
+\widetilde h_L^{\ast}=h_{HLL}-\frac{\lambda_R \Delta x}{\lambda_R-\lambda_L} (\frac{\bar{St}}{\alpha_t}+\frac{\bar{Sf}}{\alpha_f}) \\<br>
+\widetilde h_R^{\ast}=h_{HLL}-\frac{\lambda_L \Delta x}{\lambda_R-\lambda_L} (\frac{\bar{St}}{\alpha_t}+\frac{\bar{Sf}}{\alpha_f})<br>
+\end{cases}<br>
+$$</p>
+<p>$$<br>
+\begin{cases}<br>
+\alpha_t=&amp;-\frac{(q^{\ast})^2}{h_Lh_R}+g\frac{h_L+h_R}{2} \\<br>
+\alpha_f=&amp;-\frac{(\bar{q})^2}{h_Lh_R}+g\frac{h_L+h_R}{2}<br>
+\end{cases}<br>
+$$</p>
+<p>$$<br>
+\begin{cases}<br>
+h_L^{\ast}=\min\left(\max(\widetilde h_L^{\ast},h_{\varepsilon}),(1-\frac{\lambda_R}{\lambda_L})h_{HLL}+\frac{\lambda_R}{\lambda_L}h_{\varepsilon}\right) \\<br>
+h_R^{\ast}=\min\left(\max(\widetilde h_R^{\ast},h_{\varepsilon}),(1-\frac{\lambda_L}{\lambda_R})h_{HLL}+\frac{\lambda_L}{\lambda_R}h_{\varepsilon}\right)<br>
+\end{cases}<br>
+$$</p>
+<p>where $h_{\varepsilon}=\min(h_L,h_R,h_{HLL})$ is taken for preserving positivity.</p>
+<p>The topography source term is well-balanced when $\partial W/\partial t=0$, such that</p>
+<p>$$<br>
+\begin{cases}<br>
+\frac{\partial }{\partial x} q &amp; = &amp; 0 \\<br>
+\frac{\partial }{\partial x} \left(\frac{q^2}{h}+\frac{1}{2}gh^2\right)&amp;=&amp;-gh\frac{\partial z}{\partial t}<br>
+\end{cases}<br>
+$$</p>
 <p>With the left and right conditions, the cell-averaged topography source term is</p>
-<p>$$<br>\Delta x \overline{St}&#x3D;-2g[z]\frac{h_Lh_R}{h_L+h_R}+\frac{g}{2}\frac{[h]^3}{h_L+h_R}, [X]&#x3D;X_R-X_L<br>$$</p>
-<p>Similarly, the cell-averaged friction term is $\overline{Sf}&#x3D;-C_f\bar{q}|\bar{q}|&#x2F;\overline{h^{-\eta}}$, with</p>
-<p>$$<br>\overline{h^{-\eta}}&#x3D;\frac{h^2}{2}\frac{\eta+2}{[h^{\eta+2}]}<br>-\frac{\text{sgn}(\bar q)}{C_f\Delta x}\left(\left[\frac{1}{h}\right]+\frac{h^2}{2}\frac{\eta-1}{[h^{\eta-1}]}\frac{\eta+2}{[h^{\eta+2}]}\right)<br>$$</p>
+<p>$$<br>
+\Delta x \overline{St}=-2g[z]\frac{h_Lh_R}{h_L+h_R}+\frac{g}{2}\frac{[h]^3}{h_L+h_R}, [X]=X_R-X_L<br>
+$$</p>
+<p>Similarly, the cell-averaged friction term is $\overline{Sf}=-C_f\bar{q}|\bar{q}|/\overline{h^{-\eta}}$, with</p>
+<p>$$<br>
+\overline{h^{-\eta}}=\frac{h^2}{2}\frac{\eta+2}{[h^{\eta+2}]}<br>
+-\frac{\text{sgn}(\bar q)}{C_f\Delta x}\left(\left[\frac{1}{h}\right]+\frac{h^2}{2}\frac{\eta-1}{[h^{\eta-1}]}\frac{\eta+2}{[h^{\eta+2}]}\right)<br>
+$$</p>
 <p>and</p>
-<p>$$<br>\bar q&#x3D;\begin{cases}<br>\frac{2|q_Lq_R|}{|q_L|+|q_R|}\text{sgn}(q_L+q_R), &amp;\text{if } C_fq_Lq_R \neq 0\\<br>0, &amp;\text{otherwise}<br>\end{cases}<br>$$</p>
-<h3 id="Semi-implicit-evolution"><a href="#Semi-implicit-evolution" class="headerlink" title="Semi-implicit evolution"></a>Semi-implicit evolution</h3><p>For quasi-steady states that the topography source term is balanced by the friction term (i.e., $C_fq|q|&#x2F;h^{\eta}\approx-gh\frac{\partial z}{\partial x}$), one-step evolution is more suitable because the total source term is small (i.e., $\mathrm{d}W&#x2F;\mathrm{d}t\approx 0$).However, there are likely multiple reasons that cause one of them to dominate. For example, in lakes or reservoirs at rest with complicated topography, the topography source term exceeds the friction term; in contrast, for a relatively flat riverbed with coarse sand, the friction term exceeds the topography source term.</p>
+<p>$$<br>
+\bar q=\begin{cases}<br>
+\frac{2|q_Lq_R|}{|q_L|+|q_R|}\text{sgn}(q_L+q_R), &amp;\text{if } C_fq_Lq_R \neq 0\\<br>
+0, &amp;\text{otherwise}<br>
+\end{cases}<br>
+$$</p>
+<h3 id="Semi-implicit-evolution">Semi-implicit evolution</h3>
+<p>For quasi-steady states that the topography source term is balanced by the friction term (i.e., $C_fq|q|/h^{\eta}\approx-gh\frac{\partial z}{\partial x}$), one-step evolution is more suitable because the total source term is small (i.e., $\mathrm{d}W/\mathrm{d}t\approx 0$).However, there are likely multiple reasons that cause one of them to dominate. For example, in lakes or reservoirs at rest with complicated topography, the topography source term exceeds the friction term; in contrast, for a relatively flat riverbed with coarse sand, the friction term exceeds the topography source term.</p>
 <p>A two-step semi-implicit scheme is adopted to deal with the unbalance. Firstly, the advection flux and the topography are solved together</p>
-<p>$$<br>W_j^{n+1&#x2F;2}&#x3D;W_j^n-\frac{\Delta t}{\Delta x}\left(F_{j+1&#x2F;2}^n-F_{j-1&#x2F;2}^n\right)<br>+\frac{\Delta t}{2} \left( St_{j-1&#x2F;2}+St_{j+1&#x2F;2} \right)<br>$$</p>
-<p>Secondly, the friction term is solved analytically with $h^{n+1}&#x3D;h^{n+1&#x2F;2}$,</p>
-<p>$$<br>q_j^{n+1}&#x3D;\frac{(h_j^{n+1})^\eta q_j^{n+1&#x2F;2}}{(h_j^{n+1})^\eta+C_f\Delta t|q_{j}^{n+1&#x2F;2}|}<br>$$</p>
-<h2 id="Sediment-Transport"><a href="#Sediment-Transport" class="headerlink" title="Sediment Transport"></a>Sediment Transport</h2><p>For each group of grain size, the transport equation can be discreted as</p>
-<p>$$<br>\frac{hC_j^{n+1}-hC_j^n }{\Delta t}+\frac{qC_{j+1&#x2F;2}^n-qC_{j-1&#x2F;2}^n }{\Delta t}&#x3D;\alpha\omega(C_e-C)<br>$$</p>
+<p>$$<br>
+W_j^{n+1/2}=W_j^n-\frac{\Delta t}{\Delta x}\left(F_{j+1/2}^n-F_{j-1/2}^n\right)<br>
++\frac{\Delta t}{2} \left( St_{j-1/2}+St_{j+1/2} \right)<br>
+$$</p>
+<p>Secondly, the friction term is solved analytically with $h^{n+1}=h^{n+1/2}$,</p>
+<p>$$<br>
+q_j^{n+1}=\frac{(h_j^{n+1})^\eta q_j^{n+1/2}}{(h_j^{n+1})^\eta+C_f\Delta t|q_{j}^{n+1/2}|}<br>
+$$</p>
+<h2 id="Sediment-Transport">Sediment Transport</h2>
+<p>For each group of grain size, the transport equation can be discreted as</p>
+<p>$$<br>
+\frac{hC_j^{n+1}-hC_j^n }{\Delta t}+\frac{qC_{j+1/2}^n-qC_{j-1/2}^n }{\Delta t}=\alpha\omega(C_e-C)<br>
+$$</p>
 <p>here the subscriptor $i$ for $i$-th grain size group is omitted. The transition between high and low sediment transport efficiency will induce significant change in $C_e$, numerical schemes of the convection flux and the unsaturated source term have been imporved respectively for the order of accuracy and stability.</p>
-<h3 id="Numerical-Convection-Flux"><a href="#Numerical-Convection-Flux" class="headerlink" title="Numerical Convection Flux"></a>Numerical Convection Flux</h3><p>The celerity of concentration convection is $\lambda_s&#x3D;u$; then the Godunov reconstruction degenerates into the first-order upwind scheme because there is no star region. A MUSCL-type reconstruction is adopted to improve the accuracy to $O(\Delta x^2)$, so as to capture high-resolution profiles of progradation waves for sediment concentration, riverbed elevation, and grain size distribution; meanwhile, the minmod limiter $\phi_{\text{minmod}}$ is also adopted to reduce numerical oscillation where the slope of the conservative variable is $\Delta hC_{i,j+1&#x2F;2}&#x3D;hC_{i,j+1}-hC_{i,j}$ for the $i$-th grain size group.</p>
+<h3 id="Numerical-Convection-Flux">Numerical Convection Flux</h3>
+<p>The celerity of concentration convection is $\lambda_s=u$; then the Godunov reconstruction degenerates into the first-order upwind scheme because there is no star region. A MUSCL-type reconstruction is adopted to improve the accuracy to $O(\Delta x^2)$, so as to capture high-resolution profiles of progradation waves for sediment concentration, riverbed elevation, and grain size distribution; meanwhile, the minmod limiter $\phi_{\text{minmod}}$ is also adopted to reduce numerical oscillation where the slope of the conservative variable is $\Delta hC_{i,j+1/2}=hC_{i,j+1}-hC_{i,j}$ for the $i$-th grain size group.</p>
 <p>For $u&gt;0$, the up-wind numerical flux is thus</p>
-<p>$$<br>qC_{j+1&#x2F;2}&#x3D;u_{j}hC_{j}+\frac{1}{2}\phi(\Delta hC_{j-1&#x2F;2},\Delta hC_{j+1&#x2F;2})<br>$$</p>
-<h3 id="Unsaturated-Sediment-Entrainment-Source-Term"><a href="#Unsaturated-Sediment-Entrainment-Source-Term" class="headerlink" title="Unsaturated Sediment Entrainment Source Term"></a>Unsaturated Sediment Entrainment Source Term</h3><p>Because the numerical convection term has been treated as above, the source term is analyzed along the characteristic line, with the analytic solution.</p>
-<p>$$<br>C^{n+1}&#x3D;\bar C_e-(\bar C_e-C^n)e^{-\alpha\omega\Delta t&#x2F;\bar{h}}<br>$$</p>
-<p>The saturated concentration $C_e$ is determined by the flow condition and riverbed grain size distrubution, i.e., $C_e&#x3D;C_e(q,h,\vec P)$, however, the saturated concentration $C_e$ and flow depth $h$ are treated as constant to yield the analytic solution. It is also assumed that the changes in flow condition and grain size distrubution play minor roles on sediment transport within one time step, such that the averaged quantities are treated with $\bar C_{e,j}&#x3D;C_{e,j}(q^{n+1}_j,h^{n+1}_j,\vec P^{n+1}_j)$ and $\bar h&#x3D;h^{n+1}_j$ or $\bar h&#x3D;h^{n}$ or $1&#x2F;\bar h&#x3D;\frac{1}{2}(1&#x2F;h^n_j+1&#x2F;h^{n+1}_j)$.</p>
-<p>In addition, the abrupt change in sediment transport capacity (saturated concentration) due to riverbed grain size coarsening is likely to introduce numerical instability in a chain process from flow condition to sediment. Thus, a smooth treatment is adopted that $\bar C_{e,j}&#x3D;\frac{1}{2}(C_{e,j-1}+2C_{e,j}+C_{e,j+1})$ to filter out the perturbation.</p>
-<p>Within one timestep, the total quantity of erosion&#x2F;deposition is thus to sum $\alpha\omega(C^{n+1}_j-C^n_j)$ for all grain size groups, then update riverbed elevation and grain size distribution following the concentration convection.</p>
-<h1 id="Numerical-Experiment"><a href="#Numerical-Experiment" class="headerlink" title="Numerical Experiment"></a>Numerical Experiment</h1><p>To study the differnt characteristic scales of differnt processes, including, hydrodynamics, sediment concentration convection, riverbed elevation and grain size distribution. Sets of different flow and sediment conditions are demonstrated in each characteristic timescale to capture the progradation waves, while the different settings consist of (a) silt and fine sand case; (b) sediment transport efficiency transition across silt-sand; (c) sand-bed case.</p>
-<h2 id="Case-1-sediment-cutoff"><a href="#Case-1-sediment-cutoff" class="headerlink" title="Case #1: sediment cutoff"></a>Case #1: sediment cutoff</h2><p>This case tests a sudden sediment cutoff ($\times 10^{-3}$), while the initial setting follows</p>
-<p>$$<br>\begin{array}{cccc}  % 4列，均为居中对齐（l&#x3D;左对齐，r&#x3D;右对齐，c&#x3D;居中）<br>    \hline<br>    \text{Parameter} &amp; \text{Value} &amp; \text{Parameter} &amp; \text{Value} \\  % 第1行（表头）<br>    \hline<br>    L &amp; 200km &amp; \Delta x &amp; 0.5km\\<br>    q_w(t&#x3D;0) &amp; 10m^2&#x2F;s &amp; \text{GCFL} &amp; 0.5 \\<br>    q_C(t&#x3D;0) &amp; 2.33m^2&#x2F;s &amp; S &amp; 2\times 10^{-4}\\<br>    D_{sg} &amp; 75\mu m &amp; \sigma_D &amp; 2.5 \\<br>    \hline  % 底部横线<br>\end{array}<br>$$</p>
-<p>The time series of water and sediment supply follows, together with corresponding results</p>
-<p><img src="/images/Transition-Morphodynamics/case1.png" alt="case1"></p>
-<p>In this case, the erosion wave progradates to $x\approx 146km$ stably. At the front of the scour hole of riverbed, the grain size distribution is also showing a stable progradation wave.</p>
-<h2 id="Case-2-sediment-cutoff-frenquent-and-fierce-water-fluctuation"><a href="#Case-2-sediment-cutoff-frenquent-and-fierce-water-fluctuation" class="headerlink" title="Case #2: sediment cutoff &amp; frenquent and fierce water fluctuation"></a>Case #2: sediment cutoff &amp; frenquent and fierce water fluctuation</h2><p>This case tests a sudden sediment cutoff ($\times 10^{-3}$) with a sine varying water supply condition, while other initial settings are consistent with case#1.</p>
-<p>A sine function has been applied to describe a fluctuating water supply, more specificly, the input is</p>
-<p>$$<br>q_w(x&#x3D;0,t)&#x3D;q_w(t&#x3D;0)\cdot(A\sin(\frac{2\pi t}{T&#x2F;n_w})+1)<br>$$</p>
-<p>where $A&lt;1$ represents the magnitude of fluctuation, $n_w$ presents the number of periods included during the whole simulation. In this case, the parameters are set to</p>
-<p>$$<br>\begin{array}{cccc}  % 4列，均为居中对齐（l&#x3D;左对齐，r&#x3D;右对齐，c&#x3D;居中）<br>    \hline<br>    \text{Parameter} &amp; \text{Value} &amp; \text{Parameter} &amp; \text{Value} \\  % 第1行（表头）<br>    \hline<br>    L &amp; 200km &amp; \Delta x &amp; 0.5km\\<br>    q_w(t&#x3D;0) &amp; 10m^2&#x2F;s &amp; \text{GCFL} &amp; 0.5 \\<br>    q_C(t&#x3D;0) &amp; 2.33m^2&#x2F;s &amp; S &amp; 2\times 10^{-4}\\<br>    D_{sg} &amp; 75\mu m &amp; \sigma_D &amp; 2.5 \\<br>    A &amp; 0.5 &amp; n_w &amp; 10\\<br>    \hline  % 底部横线<br>\end{array}<br>$$</p>
-<p>The time series of water and sediment supply follows, together with corresponding results</p>
-<p><img src="/images/Transition-Morphodynamics/case2.png" alt="Fig 2" title="case2"></p>
-<p>In this case, the erosion wave progradates to $x\approx 175km$ stably. At the front of the scour hole of riverbed, the grain size distribution is also showing a stable progradation wave.</p>
-<p>Comparing Case #1 with Case #2, a fluctuating water supply gives higher celerities in erosion and riverbed coarsening. The wave progradates faster in Case #2 than Case #1 does, i.e., $x&#x3D;175km$ versus $x&#x3D;146km$ at $T&#x3D;8\times10^5s$.</p>
-<h2 id="Case-3-sediment-cutoff-water-fluctuation-with-lower-magnitude"><a href="#Case-3-sediment-cutoff-water-fluctuation-with-lower-magnitude" class="headerlink" title="Case #3: sediment cutoff &amp; water fluctuation with lower magnitude"></a>Case #3: sediment cutoff &amp; water fluctuation with lower magnitude</h2><p>Similar with Case #2, but this case focuses on a lower variability, i.e., $A&#x3D;0.2$ for the magnitude。</p>
-<p><img src="/images/Transition-Morphodynamics/case3.png" alt="case3"></p>
-<p>The erosion wave progradates to $x\approx152km$, confirming that a higher magnitude brings a higher celerity.</p>
-<h2 id="Case-4-Much-Finer-Grid1"><a href="#Case-4-Much-Finer-Grid1" class="headerlink" title="Case #4: Much Finer Grid1"></a>Case #4: Much Finer Grid1</h2><p>This case is analogous with Case#3, increased grid number to enhance the resolution, where the mesh grid is $\Delta x&#x3D;\frac{200km}{2000}&#x3D;100m$.</p>
-<p><img src="/images/Transition-Morphodynamics/case4.png"></p>
-<h2 id="Case-5-Coarsest-Grid"><a href="#Case-5-Coarsest-Grid" class="headerlink" title="Case #5: Coarsest Grid"></a>Case #5: Coarsest Grid</h2><p>This case is analogous with Case#3, decreased grid number to test the accuracy, where the mesh grid is $\Delta x&#x3D;\frac{200km}{100}&#x3D;2000m$.</p>
-<p><img src="/images/Transition-Morphodynamics/case5.png"></p>
-<h2 id="Case-6-Very-Very-Fine-grid"><a href="#Case-6-Very-Very-Fine-grid" class="headerlink" title="Case #6: Very Very Fine grid"></a>Case #6: Very Very Fine grid</h2><p>This case is analogous with Case#3, increased grid number to enhance the resolution, where the mesh grid is $\Delta x&#x3D;\frac{200km}{6400}&#x3D;31.25m$</p>
-<p><img src="/images/Transition-Morphodynamics/case6.png"></p>
-<h2 id="Case-7-Very-Fine"><a href="#Case-7-Very-Fine" class="headerlink" title="Case #7: Very Fine"></a>Case #7: Very Fine</h2><p>This case is analogous with Case#3, increased grid number to enhance the resolution, where the mesh grid is $\Delta x&#x3D;\frac{200km}{3200}&#x3D;62.5m$</p>
-<p><img src="/images/Transition-Morphodynamics/case7.png"></p>
-<h2 id="Case-8-Much-Finer-Grid2"><a href="#Case-8-Much-Finer-Grid2" class="headerlink" title="Case #8 Much Finer Grid2"></a>Case #8 Much Finer Grid2</h2><p>This case is analogous with Case#3, increased grid number to enhance the resolution, where the mesh grid is $\Delta x&#x3D;\frac{200km}{1600}&#x3D;125m$</p>
-<p><img src="/images/Transition-Morphodynamics/case8.png"></p>
-<h2 id="Case-9-Finer-Grid"><a href="#Case-9-Finer-Grid" class="headerlink" title="Case #9 Finer Grid"></a>Case #9 Finer Grid</h2><p>This case is analogous with Case#3, increased grid number to enhance the resolution, where the mesh grid is $\Delta x&#x3D;\frac{200km}{800}&#x3D;250m$</p>
-<p><img src="/images/Transition-Morphodynamics/case9.png"></p>
-<h2 id="Case-10-Coarser-Grid"><a href="#Case-10-Coarser-Grid" class="headerlink" title="Case #10 Coarser Grid"></a>Case #10 Coarser Grid</h2><p>This case is analogous with Case#3, decreased grid number to test the accuracy and robustness, where the mesh grid is $\Delta x&#x3D;\frac{200km}{200}&#x3D;1000m$</p>
-<p><img src="/images/Transition-Morphodynamics/case10.png"></p>
-<h2 id="Case-11-Finest-Baseline-Grid"><a href="#Case-11-Finest-Baseline-Grid" class="headerlink" title="Case #11 Finest Baseline Grid"></a>Case #11 Finest Baseline Grid</h2><p>This case is analogous with Case#3, increased grid number to enhance the resolution and taken as the reference, where the mesh grid is $\Delta x&#x3D;\frac{200km}{12800}&#x3D;15.626m$</p>
-<p><img src="/images/Transition-Morphodynamics/case11.png"></p>
-<h2 id="Case-12-Low-Frequency-Water-supply"><a href="#Case-12-Low-Frequency-Water-supply" class="headerlink" title="Case #12 Low-Frequency Water supply"></a>Case #12 Low-Frequency Water supply</h2><p>This case is analogous with Case#3, but containing $n_w&#x3D;5$ periods.</p>
-<p><img src="/images/Transition-Morphodynamics/case12.png"></p>
-<h2 id="Case-13-Higher-Frequency-Water-supply"><a href="#Case-13-Higher-Frequency-Water-supply" class="headerlink" title="Case #13 Higher-Frequency Water supply"></a>Case #13 Higher-Frequency Water supply</h2><p>This case is analogous with Case#3, but containing $n_w&#x3D;20$ periods.</p>
-<p><img src="/images/Transition-Morphodynamics/case13.png"></p>
-<h2 id="Case-14-Highest-Frequency-Water-supply"><a href="#Case-14-Highest-Frequency-Water-supply" class="headerlink" title="Case #14 Highest-Frequency Water supply"></a>Case #14 Highest-Frequency Water supply</h2><p>This case is analogous with Case#3, but containing $n_w&#x3D;40$ periods.</p>
-<p><img src="/images/Transition-Morphodynamics/case14.png"></p>
-<h2 id="Case-15-Lowest-Frequency-Water-supply"><a href="#Case-15-Lowest-Frequency-Water-supply" class="headerlink" title="Case #15 Lowest-Frequency Water supply"></a>Case #15 Lowest-Frequency Water supply</h2><p>This case is analogous with Case#3, but containing $n_w&#x3D;2$ periods.</p>
-<p><img src="/images/Transition-Morphodynamics/case15.png"></p>
-<h1 id="Result"><a href="#Result" class="headerlink" title="Result"></a>Result</h1><h2 id="Impacts-of-flow-variability"><a href="#Impacts-of-flow-variability" class="headerlink" title="Impacts of flow variability"></a>Impacts of flow variability</h2><p>To demonstrate the impacts of flow variability, the magnitude of the sine function of water supply has been varied in Case #1, #2, #3. The comparison follows,</p>
-<p><img src="/images/Transition-Morphodynamics/cmp1.png"></p>
+<p>$$<br>
+qC_{j+1/2}=u_{j}hC_{j}+\frac{1}{2}\phi(\Delta hC_{j-1/2},\Delta hC_{j+1/2})<br>
+$$</p>
+<h3 id="Unsaturated-Sediment-Entrainment-Source-Term">Unsaturated Sediment Entrainment Source Term</h3>
+<p>Because the numerical convection term has been treated as above, the source term is analyzed along the characteristic line, with the analytic solution.</p>
+<p>$$<br>
+C^{n+1}=\bar C_e-(\bar C_e-C^n)e^{-\alpha\omega\Delta t/\bar{h}}<br>
+$$</p>
+<p>The saturated concentration $C_e$ is determined by the flow condition and riverbed grain size distrubution, i.e., $C_e=C_e(q,h,\vec P)$, however, the saturated concentration $C_e$ and flow depth $h$ are treated as constant to yield the analytic solution. It is also assumed that the changes in flow condition and grain size distrubution play minor roles on sediment transport within one time step, such that the averaged quantities are treated with $\bar C_{e,j}=C_{e,j}(q^{n+1}_j,h^{n+1}_j,\vec P^{n+1}_j)$ and $\bar h=h^{n+1}_j$ or $\bar h=h^{n}$ or $1/\bar h=\frac{1}{2}(1/h^n_j+1/h^{n+1}_j)$.</p>
+<p>In addition, the abrupt change in sediment transport capacity (saturated concentration) due to riverbed grain size coarsening is likely to introduce numerical instability in a chain process from flow condition to sediment. Thus, a smooth treatment is adopted that $\bar C_{e,j}=\frac{1}{2}(C_{e,j-1}+2C_{e,j}+C_{e,j+1})$ to filter out the perturbation.</p>
+<p>Within one timestep, the total quantity of erosion/deposition is thus to sum $\alpha\omega(C^{n+1}_j-C^n_j)$ for all grain size groups, then update riverbed elevation and grain size distribution following the concentration convection.</p>
+<h1>Result</h1>
+<h2 id="Impacts-of-flow-variability">Impacts of flow variability</h2>
+<p>To demonstrate the impacts of flow variability, the magnitude of the sine function of water supply has been varied in Case #1, #2, #3. The comparison follows,</p>
+<p><img src="/images/Transition-Morphodynamics/cmp1.png" alt></p>
 <p>The scour holes have occured at different position, such that, the waves progradates at different paces and greater variability render a faster erosion wave. As to the part behind the erosion wave, the riverbed elevation profiles have shown no significant diference. Such that, flow variation makes no contribution to short-term riverbed downcutting, for which have reached quasi-equilibrium states.</p>
 <p>However, excluding the regions where flood waves have not yet arrived, the grain size distribution also differs. Greater flow variability leads to coarser bed material, as well as higher resistance coefficient and lower sediment entrainment capacity. Consequently, greater flow variability erodes riverbed much faster in a short-term view, while it also leaves a coarser riverbed for further long-term erosion.</p>
 <p>Besides, the frequency of water supply also contributes to erosion process. The period $n_w$ has been varied in Case #3, and #12-#15. The comparision indicates that, a lower frequency of water supply corresponds to a faster erosion, while the total quantity (or the mean flow condition) holds same for each case. Notably, the sediment flux differs significantly, because the flood wave does not travel to the outlet yet, such that, the spatical distribution of water flux (discharge $q$) differs as well as sediment flux.</p>
-<p><img src="/images/Transition-Morphodynamics/cmp3.png"></p>
-<h2 id="Dependence-of-grid-meshes"><a href="#Dependence-of-grid-meshes" class="headerlink" title="Dependence of grid meshes"></a>Dependence of grid meshes</h2><p>To test the dependence of grid meshes and error levels, the density (or the length of spatial step) has been varied in Case #3, and #4-#11. The comparison follows,</p>
+<p><img src="/images/Transition-Morphodynamics/cmp3.png" alt></p>
+<h2 id="Dependence-of-grid-meshes">Dependence of grid meshes</h2>
+<p>To test the dependence of grid meshes and error levels, the density (or the length of spatial step) has been varied in Case #3, and #4-#11. The comparison follows,</p>
 <p><img src="/images/Transition-Morphodynamics/cmp2.png" alt="compare2" title="grid meshes"></p>
 <p>Regions that have reached quasi-equilibrium states show no significant differences, indicating that the ability to capture saturated sediment transport does not depend on grid meshes. However, regions near the inlet and the front of erosion wave have shown differences. Firstly, the celerity of erosion wave progradation shows a negative relation with spatial resolution, i.e., dispersion error, however, dispersion error converges when enhancing spatial resolution. On the other hand, the magnitudes of coarsening and downcutting does not differ significantly, indicating that the error is dominated by numerical dispersion rather than dissipation. Secondly, finer grid meshes form a sharper riverbed profile near the inlet, as well as grain size and resistance, but they also converge quickly.</p>
+<h2 id="Controls-of-GCFL-stability-condition">Controls of GCFL stability condition</h2>
+<p>We argue that the GCFL number controls the numerical instability of unsaturated sediment transport, in Case #16-#23, the GCFL number is varied from $0.25$ to $9.5$.</p>
+<p>In order to exclude the effects of traditional CFL condition which controls the stability for hydrodynamics, in these cases, the spatial resolution is set to be large ($\Delta x=2km$) that the flood waves need long time to pass by. In addition, the CFL number is set to $1.0$ and the results in Cases #17-#20 are still stable. Consequently, the time step and stability conditions are purely restricted by the GCFL condition.</p>
+<p>Numerical instability begins to emerge when $GCFL=\ln{\frac{1}{\varepsilon}}\approx8$ near the outlet boundary. While other parameters and boundary conditions hold the same, the result indicates the significant control of the $GCFL$ on numerical stability condition, especially for the grain size group fractions.</p>
+<p><img src="/images/Transition-Morphodynamics/cmp4.png" alt></p>
+<h1>Numerical Experiment</h1>
+<p>To study the differnt characteristic scales of differnt processes, including, hydrodynamics, sediment concentration convection, riverbed elevation and grain size distribution. Sets of different flow and sediment conditions are demonstrated in each characteristic timescale to capture the progradation waves, while the different settings consist of (a) silt and fine sand case; (b) sediment transport efficiency transition across silt-sand; © sand-bed case.</p>
+<h2 id="Case-1-sediment-cutoff">Case #1: sediment cutoff</h2>
+<p>This case tests a sudden sediment cutoff ($\times 10^{-3}$), while the initial setting follows</p>
+<p>$$<br>
+\begin{array}{cccc}  % 4列，均为居中对齐（l=左对齐，r=右对齐，c=居中）<br>
+\hline<br>
+\text{Parameter} &amp; \text{Value} &amp; \text{Parameter} &amp; \text{Value} \\  % 第1行（表头）<br>
+\hline<br>
+L &amp; 200km &amp; \Delta x &amp; 0.5km\\<br>
+q_w(t=0) &amp; 10m^2/s &amp; \text{GCFL} &amp; 0.5 \\<br>
+q_C(t=0) &amp; 2.33m^2/s &amp; S &amp; 2\times 10^{-4}\\<br>
+D_{sg} &amp; 75\mu m &amp; \sigma_D &amp; 2.5 \\<br>
+\hline  % 底部横线<br>
+\end{array}<br>
+$$</p>
+<p>The time series of water and sediment supply follows, together with corresponding results</p>
+<p><img src="/images/Transition-Morphodynamics/case1.png" alt="case1"></p>
+<p>In this case, the erosion wave progradates to $x\approx 146km$ stably. At the front of the scour hole of riverbed, the grain size distribution is also showing a stable progradation wave.</p>
+<h2 id="Case-2-sediment-cutoff-frenquent-and-fierce-water-fluctuation">Case #2: sediment cutoff &amp; frenquent and fierce water fluctuation</h2>
+<p>This case tests a sudden sediment cutoff ($\times 10^{-3}$) with a sine varying water supply condition, while other initial settings are consistent with case#1.</p>
+<p>A sine function has been applied to describe a fluctuating water supply, more specificly, the input is</p>
+<p>$$<br>
+q_w(x=0,t)=q_w(t=0)\cdot(A\sin(\frac{2\pi t}{T/n_w})+1)<br>
+$$</p>
+<p>where $A&lt;1$ represents the magnitude of fluctuation, $n_w$ presents the number of periods included during the whole simulation. In this case, the parameters are set to</p>
+<p>$$<br>
+\begin{array}{cccc}  % 4列，均为居中对齐（l=左对齐，r=右对齐，c=居中）<br>
+\hline<br>
+\text{Parameter} &amp; \text{Value} &amp; \text{Parameter} &amp; \text{Value} \\  % 第1行（表头）<br>
+\hline<br>
+L &amp; 200km &amp; \Delta x &amp; 0.5km\\<br>
+q_w(t=0) &amp; 10m^2/s &amp; \text{GCFL} &amp; 0.5 \\<br>
+q_C(t=0) &amp; 2.33m^2/s &amp; S &amp; 2\times 10^{-4}\\<br>
+D_{sg} &amp; 75\mu m &amp; \sigma_D &amp; 2.5 \\<br>
+A &amp; 0.5 &amp; n_w &amp; 10\\<br>
+\hline  % 底部横线<br>
+\end{array}<br>
+$$</p>
+<p>The time series of water and sediment supply follows, together with corresponding results</p>
+<p><img src="/images/Transition-Morphodynamics/case2.png" alt="Fig 2" title="case2"></p>
+<p>In this case, the erosion wave progradates to $x\approx 175km$ stably. At the front of the scour hole of riverbed, the grain size distribution is also showing a stable progradation wave.</p>
+<p>Comparing Case #1 with Case #2, a fluctuating water supply gives higher celerities in erosion and riverbed coarsening. The wave progradates faster in Case #2 than Case #1 does, i.e., $x=175km$ versus $x=146km$ at $T=8\times10^5s$.</p>
+<h2 id="Case-3-sediment-cutoff-water-fluctuation-with-lower-magnitude">Case #3: sediment cutoff &amp; water fluctuation with lower magnitude</h2>
+<p>Similar with Case #2, but this case focuses on a lower variability, i.e., $A=0.2$ for the magnitude。</p>
+<p><img src="/images/Transition-Morphodynamics/case3.png" alt="case3"></p>
+<p>The erosion wave progradates to $x\approx152km$, confirming that a higher magnitude brings a higher celerity.</p>
+<h2 id="Case-4-Much-Finer-Grid1">Case #4: Much Finer Grid1</h2>
+<p>This case is analogous with Case#3, increased grid number to enhance the resolution, where the mesh grid is $\Delta x=\frac{200km}{2000}=100m$.</p>
+<p><img src="/images/Transition-Morphodynamics/case4.png" alt></p>
+<h2 id="Case-5-Coarsest-Grid">Case #5: Coarsest Grid</h2>
+<p>This case is analogous with Case#3, decreased grid number to test the accuracy, where the mesh grid is $\Delta x=\frac{200km}{100}=2000m$.</p>
+<p><img src="/images/Transition-Morphodynamics/case5.png" alt></p>
+<h2 id="Case-6-Very-Very-Fine-grid">Case #6: Very Very Fine grid</h2>
+<p>This case is analogous with Case#3, increased grid number to enhance the resolution, where the mesh grid is $\Delta x=\frac{200km}{6400}=31.25m$</p>
+<p><img src="/images/Transition-Morphodynamics/case6.png" alt></p>
+<h2 id="Case-7-Very-Fine">Case #7: Very Fine</h2>
+<p>This case is analogous with Case#3, increased grid number to enhance the resolution, where the mesh grid is $\Delta x=\frac{200km}{3200}=62.5m$</p>
+<p><img src="/images/Transition-Morphodynamics/case7.png" alt></p>
+<h2 id="Case-8-Much-Finer-Grid2">Case #8 Much Finer Grid2</h2>
+<p>This case is analogous with Case#3, increased grid number to enhance the resolution, where the mesh grid is $\Delta x=\frac{200km}{1600}=125m$</p>
+<p><img src="/images/Transition-Morphodynamics/case8.png" alt></p>
+<h2 id="Case-9-Finer-Grid">Case #9 Finer Grid</h2>
+<p>This case is analogous with Case#3, increased grid number to enhance the resolution, where the mesh grid is $\Delta x=\frac{200km}{800}=250m$</p>
+<p><img src="/images/Transition-Morphodynamics/case9.png" alt></p>
+<h2 id="Case-10-Coarser-Grid">Case #10 Coarser Grid</h2>
+<p>This case is analogous with Case#3, decreased grid number to test the accuracy and robustness, where the mesh grid is $\Delta x=\frac{200km}{200}=1000m$</p>
+<p><img src="/images/Transition-Morphodynamics/case10.png" alt></p>
+<h2 id="Case-11-Finest-Baseline-Grid">Case #11 Finest Baseline Grid</h2>
+<p>This case is analogous with Case#3, increased grid number to enhance the resolution and taken as the reference, where the mesh grid is $\Delta x=\frac{200km}{12800}=15.626m$</p>
+<p><img src="/images/Transition-Morphodynamics/case11.png" alt></p>
+<h2 id="Case-12-Low-Frequency-Water-supply">Case #12 Low-Frequency Water supply</h2>
+<p>This case is analogous with Case#3, but containing $n_w=5$ periods.</p>
+<p><img src="/images/Transition-Morphodynamics/case12.png" alt></p>
+<h2 id="Case-13-Higher-Frequency-Water-supply">Case #13 Higher-Frequency Water supply</h2>
+<p>This case is analogous with Case#3, but containing $n_w=20$ periods.</p>
+<p><img src="/images/Transition-Morphodynamics/case13.png" alt></p>
+<h2 id="Case-14-Highest-Frequency-Water-supply">Case #14 Highest-Frequency Water supply</h2>
+<p>This case is analogous with Case#3, but containing $n_w=40$ periods.</p>
+<p><img src="/images/Transition-Morphodynamics/case14.png" alt></p>
+<h2 id="Case-15-Lowest-Frequency-Water-supply">Case #15 Lowest-Frequency Water supply</h2>
+<p>This case is analogous with Case#3, but containing $n_w=2$ periods.</p>
+<p><img src="/images/Transition-Morphodynamics/case15.png" alt></p>
+<h2 id="Case-16">Case #16</h2>
+<p>$q(x=0,t)=q(t=0)\cdot(0.5\sin(2\pi \frac{t}{80000 s})+1)$, $GCFL=8$</p>
+<p>$$<br>
+\begin{array}{cccc}  % 4列，均为居中对齐（l=左对齐，r=右对齐，c=居中）<br>
+\hline<br>
+\text{Parameter} &amp; \text{Value} &amp; \text{Parameter} &amp; \text{Value} \\  % 第1行（表头）<br>
+\hline<br>
+L &amp; 200km &amp; \Delta x &amp; 2km\\<br>
+q_w(t=0) &amp; 10m^2/s &amp; \text{GCFL} &amp; 8 \\<br>
+q_C(t=0) &amp; 2.33m^2/s &amp; S &amp; 2\times 10^{-4}\\<br>
+D_{sg} &amp; 75\mu m &amp; \sigma_D &amp; 2.5 \\<br>
+\hline  % 底部横线<br>
+\end{array}<br>
+$$</p>
+<p><img src="/images/Transition-Morphodynamics/case16.png" alt></p>
+<h2 id="Case-17">Case #17</h2>
+<p>$GCFL=4$</p>
+<p><img src="/images/Transition-Morphodynamics/case17.png" alt></p>
+<h2 id="Case-18">Case #18</h2>
+<p>$GCFL=2$</p>
+<p><img src="/images/Transition-Morphodynamics/case18.png" alt></p>
+<h2 id="Case-19">Case #19</h2>
+<p>$GCFL=1$</p>
+<p><img src="/images/Transition-Morphodynamics/case19.png" alt></p>
+<h2 id="Case-20">Case #20</h2>
+<p>$GCFL=0.5$</p>
+<p><img src="/images/Transition-Morphodynamics/case20.png" alt></p>
+<h2 id="Case-21">Case #21</h2>
+<p>$GCFL=0.25$</p>
+<p><img src="/images/Transition-Morphodynamics/case21.png" alt></p>
+<h2 id="Case-22">Case #22</h2>
+<p>$GCFL=9$</p>
+<p><img src="/images/Transition-Morphodynamics/case22.png" alt></p>
+<h2 id="Case-23">Case #23</h2>
+<p>$GCFL=9.5$</p>
+<p><img src="/images/Transition-Morphodynamics/case23.png" alt></p>
 
     </div>
 
@@ -421,7 +628,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Governing-Equations"><span class="nav-number">1.</span> <span class="nav-text">Governing Equations</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hydrodynamics-1D-Shallow-Water-with-Topography-and-Friction"><span class="nav-number">1.1.</span> <span class="nav-text">Hydrodynamics: 1D Shallow Water with Topography and Friction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sediment-Concentration"><span class="nav-number">1.2.</span> <span class="nav-text">Sediment Concentration</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exner-Equation-for-Riverbed-Elevation"><span class="nav-number">1.3.</span> <span class="nav-text">Exner Equation for Riverbed Elevation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Riverbed-Surface-Grain-Fraction-and-Exchange-with-Substrates"><span class="nav-number">1.4.</span> <span class="nav-text">Riverbed Surface Grain Fraction and Exchange with Substrates</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Substrate-Stratigraphy"><span class="nav-number">1.5.</span> <span class="nav-text">Substrate Stratigraphy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Resistance-and-Sediment-Transport-Capacity"><span class="nav-number">1.6.</span> <span class="nav-text">Resistance and Sediment Transport Capacity</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Characteristic-Scales-and-Numerical-Rigidity"><span class="nav-number">2.</span> <span class="nav-text">Characteristic Scales and Numerical Rigidity</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hydrodynamics-and-Sediment-Concentration-Transport"><span class="nav-number">2.1.</span> <span class="nav-text">Hydrodynamics and Sediment Concentration Transport</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Deposition-and-Erosion"><span class="nav-number">2.2.</span> <span class="nav-text">Deposition and Erosion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Riverbed"><span class="nav-number">2.3.</span> <span class="nav-text">Riverbed</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Numerical-Rigidity-and-Stability-Condition"><span class="nav-number">2.4.</span> <span class="nav-text">Numerical Rigidity and Stability Condition</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Numerical-schemes"><span class="nav-number">3.</span> <span class="nav-text">Numerical schemes</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hydrodynamics"><span class="nav-number">3.1.</span> <span class="nav-text">Hydrodynamics</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Well-balanced-HLLC-Flux-for-Topography-and-Friction"><span class="nav-number">3.1.1.</span> <span class="nav-text">Well-balanced HLLC Flux for Topography and Friction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Semi-implicit-evolution"><span class="nav-number">3.1.2.</span> <span class="nav-text">Semi-implicit evolution</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sediment-Transport"><span class="nav-number">3.2.</span> <span class="nav-text">Sediment Transport</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Numerical-Convection-Flux"><span class="nav-number">3.2.1.</span> <span class="nav-text">Numerical Convection Flux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Unsaturated-Sediment-Entrainment-Source-Term"><span class="nav-number">3.2.2.</span> <span class="nav-text">Unsaturated Sediment Entrainment Source Term</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Numerical-Experiment"><span class="nav-number">4.</span> <span class="nav-text">Numerical Experiment</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-1-sediment-cutoff"><span class="nav-number">4.1.</span> <span class="nav-text">Case #1: sediment cutoff</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-2-sediment-cutoff-frenquent-and-fierce-water-fluctuation"><span class="nav-number">4.2.</span> <span class="nav-text">Case #2: sediment cutoff &amp; frenquent and fierce water fluctuation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-3-sediment-cutoff-water-fluctuation-with-lower-magnitude"><span class="nav-number">4.3.</span> <span class="nav-text">Case #3: sediment cutoff &amp; water fluctuation with lower magnitude</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-4-Much-Finer-Grid1"><span class="nav-number">4.4.</span> <span class="nav-text">Case #4: Much Finer Grid1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-5-Coarsest-Grid"><span class="nav-number">4.5.</span> <span class="nav-text">Case #5: Coarsest Grid</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-6-Very-Very-Fine-grid"><span class="nav-number">4.6.</span> <span class="nav-text">Case #6: Very Very Fine grid</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-7-Very-Fine"><span class="nav-number">4.7.</span> <span class="nav-text">Case #7: Very Fine</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-8-Much-Finer-Grid2"><span class="nav-number">4.8.</span> <span class="nav-text">Case #8 Much Finer Grid2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-9-Finer-Grid"><span class="nav-number">4.9.</span> <span class="nav-text">Case #9 Finer Grid</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-10-Coarser-Grid"><span class="nav-number">4.10.</span> <span class="nav-text">Case #10 Coarser Grid</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-11-Finest-Baseline-Grid"><span class="nav-number">4.11.</span> <span class="nav-text">Case #11 Finest Baseline Grid</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-12-Low-Frequency-Water-supply"><span class="nav-number">4.12.</span> <span class="nav-text">Case #12 Low-Frequency Water supply</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-13-Higher-Frequency-Water-supply"><span class="nav-number">4.13.</span> <span class="nav-text">Case #13 Higher-Frequency Water supply</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-14-Highest-Frequency-Water-supply"><span class="nav-number">4.14.</span> <span class="nav-text">Case #14 Highest-Frequency Water supply</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-15-Lowest-Frequency-Water-supply"><span class="nav-number">4.15.</span> <span class="nav-text">Case #15 Lowest-Frequency Water supply</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Result"><span class="nav-number">5.</span> <span class="nav-text">Result</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Impacts-of-flow-variability"><span class="nav-number">5.1.</span> <span class="nav-text">Impacts of flow variability</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dependence-of-grid-meshes"><span class="nav-number">5.2.</span> <span class="nav-text">Dependence of grid meshes</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">Governing Equations</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hydrodynamics-1D-Shallow-Water-with-Topography-and-Friction"><span class="nav-number">1.1.</span> <span class="nav-text">Hydrodynamics: 1D Shallow Water with Topography and Friction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sediment-Concentration"><span class="nav-number">1.2.</span> <span class="nav-text">Sediment Concentration</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exner-Equation-for-Riverbed-Elevation"><span class="nav-number">1.3.</span> <span class="nav-text">Exner Equation for Riverbed Elevation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Riverbed-Surface-Grain-Fraction-and-Exchange-with-Substrates"><span class="nav-number">1.4.</span> <span class="nav-text">Riverbed Surface Grain Fraction and Exchange with Substrates</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Substrate-Stratigraphy"><span class="nav-number">1.5.</span> <span class="nav-text">Substrate Stratigraphy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Resistance-and-Sediment-Transport-Capacity"><span class="nav-number">1.6.</span> <span class="nav-text">Resistance and Sediment Transport Capacity</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">Characteristic Scales and Numerical Rigidity</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hydrodynamics-and-Sediment-Concentration-Transport"><span class="nav-number">2.1.</span> <span class="nav-text">Hydrodynamics and Sediment Concentration Transport</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Deposition-and-Erosion"><span class="nav-number">2.2.</span> <span class="nav-text">Deposition and Erosion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Riverbed"><span class="nav-number">2.3.</span> <span class="nav-text">Riverbed</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Numerical-Rigidity-and-Stability-Condition"><span class="nav-number">2.4.</span> <span class="nav-text">Numerical Rigidity and Stability Condition</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">Numerical schemes</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hydrodynamics"><span class="nav-number">3.1.</span> <span class="nav-text">Hydrodynamics</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Well-balanced-HLLC-Flux-for-Topography-and-Friction"><span class="nav-number">3.1.1.</span> <span class="nav-text">Well-balanced HLLC Flux for Topography and Friction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Semi-implicit-evolution"><span class="nav-number">3.1.2.</span> <span class="nav-text">Semi-implicit evolution</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sediment-Transport"><span class="nav-number">3.2.</span> <span class="nav-text">Sediment Transport</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Numerical-Convection-Flux"><span class="nav-number">3.2.1.</span> <span class="nav-text">Numerical Convection Flux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Unsaturated-Sediment-Entrainment-Source-Term"><span class="nav-number">3.2.2.</span> <span class="nav-text">Unsaturated Sediment Entrainment Source Term</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">Result</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Impacts-of-flow-variability"><span class="nav-number">4.1.</span> <span class="nav-text">Impacts of flow variability</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dependence-of-grid-meshes"><span class="nav-number">4.2.</span> <span class="nav-text">Dependence of grid meshes</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Controls-of-GCFL-stability-condition"><span class="nav-number">4.3.</span> <span class="nav-text">Controls of GCFL stability condition</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">Numerical Experiment</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-1-sediment-cutoff"><span class="nav-number">5.1.</span> <span class="nav-text">Case #1: sediment cutoff</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-2-sediment-cutoff-frenquent-and-fierce-water-fluctuation"><span class="nav-number">5.2.</span> <span class="nav-text">Case #2: sediment cutoff &amp; frenquent and fierce water fluctuation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-3-sediment-cutoff-water-fluctuation-with-lower-magnitude"><span class="nav-number">5.3.</span> <span class="nav-text">Case #3: sediment cutoff &amp; water fluctuation with lower magnitude</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-4-Much-Finer-Grid1"><span class="nav-number">5.4.</span> <span class="nav-text">Case #4: Much Finer Grid1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-5-Coarsest-Grid"><span class="nav-number">5.5.</span> <span class="nav-text">Case #5: Coarsest Grid</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-6-Very-Very-Fine-grid"><span class="nav-number">5.6.</span> <span class="nav-text">Case #6: Very Very Fine grid</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-7-Very-Fine"><span class="nav-number">5.7.</span> <span class="nav-text">Case #7: Very Fine</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-8-Much-Finer-Grid2"><span class="nav-number">5.8.</span> <span class="nav-text">Case #8 Much Finer Grid2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-9-Finer-Grid"><span class="nav-number">5.9.</span> <span class="nav-text">Case #9 Finer Grid</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-10-Coarser-Grid"><span class="nav-number">5.10.</span> <span class="nav-text">Case #10 Coarser Grid</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-11-Finest-Baseline-Grid"><span class="nav-number">5.11.</span> <span class="nav-text">Case #11 Finest Baseline Grid</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-12-Low-Frequency-Water-supply"><span class="nav-number">5.12.</span> <span class="nav-text">Case #12 Low-Frequency Water supply</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-13-Higher-Frequency-Water-supply"><span class="nav-number">5.13.</span> <span class="nav-text">Case #13 Higher-Frequency Water supply</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-14-Highest-Frequency-Water-supply"><span class="nav-number">5.14.</span> <span class="nav-text">Case #14 Highest-Frequency Water supply</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-15-Lowest-Frequency-Water-supply"><span class="nav-number">5.15.</span> <span class="nav-text">Case #15 Lowest-Frequency Water supply</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-16"><span class="nav-number">5.16.</span> <span class="nav-text">Case #16</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-17"><span class="nav-number">5.17.</span> <span class="nav-text">Case #17</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-18"><span class="nav-number">5.18.</span> <span class="nav-text">Case #18</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-19"><span class="nav-number">5.19.</span> <span class="nav-text">Case #19</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-20"><span class="nav-number">5.20.</span> <span class="nav-text">Case #20</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-21"><span class="nav-number">5.21.</span> <span class="nav-text">Case #21</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-22"><span class="nav-number">5.22.</span> <span class="nav-text">Case #22</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-23"><span class="nav-number">5.23.</span> <span class="nav-text">Case #23</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
